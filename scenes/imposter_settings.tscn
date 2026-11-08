@@ -59,7 +59,7 @@ expand_margin_top = 2.0
 expand_margin_right = 2.0
 expand_margin_bottom = 2.0
 
-[node name="IMPOSTER SETTINGS" type="Control" unique_id=1992821977 node_paths=PackedStringArray("chance_label", "chance_slider", "again_label", "again_slider")]
+[node name="IMPOSTER SETTINGS" type="Control" unique_id=1992821977 node_paths=PackedStringArray("chance_label", "chance_slider", "again_label", "again_slider", "chaos_check")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,6 +71,7 @@ chance_label = NodePath("VBoxContainer/PanelContainer/MarginContainer/VBoxContai
 chance_slider = NodePath("VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List/StartSlider")
 again_label = NodePath("VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List/AgainPercentage")
 again_slider = NodePath("VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List/AgainSlider")
+chaos_check = NodePath("VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List/ChaosCheck")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=331488157]
 layout_mode = 1
@@ -174,6 +175,29 @@ horizontal_alignment = 1
 layout_mode = 2
 value = 50.0
 rounded = true
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List" unique_id=1314756467]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ChaosTitle" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List" unique_id=784441581]
+layout_mode = 2
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 24
+text = "Chaos / Event Cards"
+autowrap_mode = 3
+
+[node name="ChaosExplain" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List" unique_id=2085544321]
+layout_mode = 2
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 12
+text = "Draw a random chaos card between rounds to create unexpected rules and twists!"
+autowrap_mode = 3
+
+[node name="ChaosCheck" type="CheckButton" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/List" unique_id=2123479513]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Enable Chaos Cards"
 
 [node name="Buttons" type="PanelContainer" parent="VBoxContainer" unique_id=1149135954]
 layout_mode = 2

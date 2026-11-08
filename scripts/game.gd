@@ -5,10 +5,23 @@ extends Node3D
 @export var next: Button
 @export var new_game: Button
 @export var exit: Button
+@export var chaos_button: Button
+@export var chaos_modal: Control
+@export var chaos_round_label: Label
+@export var chaos_title_label: Label
+@export var chaos_desc_label: Control
+@export var chaos_next_button: Button
 
 var pressing = false
 var enabled = true
 var idx = 0
+var current_round: int = 2
+var drawn_chaos_ids: Array = []
+var current_chaos_card: Dictionary = {}
+var pulse_tween: Tween
+var is_rolling_card: bool = false
+var shake_time: float = 0.0
+var shake_intensity: float = 0.0
 
 func _ready():
 	# Force every Sprite3D to broadcast its OWN SubViewport
@@ -19,6 +32,10 @@ func _ready():
 	card_2.get_node("Sprite3D2").texture = card_2.get_node("Sprite3D2/SubViewport").get_texture()
 	
 	new_game.visible = false 
+	if chaos_button:
+		chaos_button.visible = false
+	if chaos_modal:
+		chaos_modal.visible = false 
 	
 	randomize()
 	Global.decide_imposters()
@@ -32,6 +49,8 @@ func _ready():
 
 
 func _input(event):
+	if chaos_modal and chaos_modal.visible:
+		return
 	if event is InputEventScreenTouch:
 		if not event.pressed:
 			pressing = false
@@ -40,6 +59,17 @@ func _input(event):
 
 
 func _process(delta):
+	# Camera shake decay
+	if shake_time > 0.0:
+		shake_time -= delta
+		var cam = get_node_or_null("Camera3D")
+		if cam:
+			cam.h_offset = randf_range(-shake_intensity, shake_intensity)
+			cam.v_offset = randf_range(-shake_intensity, shake_intensity)
+			if shake_time <= 0.0:
+				cam.h_offset = 0.0
+				cam.v_offset = 0.0
+
 	var wishpos = 0.0
 	var wishrot = 0.0
 	if pressing and enabled and idx < len(Global.players):
@@ -76,6 +106,9 @@ func _process(delta):
 				# If we just slid into the final Summary card, show the button
 				if idx == len(Global.players):
 					new_game.visible = true
+					if chaos_button and Global.chaos_cards:
+						chaos_button.visible = true
+						_start_chaos_button_pulse()
 					
 
 
@@ -188,3 +221,132 @@ func _on_reveal_pressed():
 
 func _on_exit_pressed():
 	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
+
+
+func _start_chaos_button_pulse():
+	if not chaos_button:
+		return
+	chaos_button.pivot_offset = Vector2(chaos_button.size.x / 2.0, chaos_button.size.y / 2.0)
+	if pulse_tween and pulse_tween.is_valid():
+		pulse_tween.kill()
+	pulse_tween = create_tween().set_loops()
+	pulse_tween.tween_property(chaos_button, "scale", Vector2(1.06, 1.06), 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse_tween.tween_property(chaos_button, "scale", Vector2(1.0, 1.0), 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _shake_screen(duration: float = 0.25, intensity: float = 0.06):
+	shake_time = duration
+	shake_intensity = intensity
+
+
+func _on_chaos_button_pressed():
+	if is_rolling_card:
+		return
+	if not chaos_modal:
+		return
+	
+	chaos_modal.visible = true
+	var dimmer = chaos_modal.get_node_or_null("Dimmer")
+	var panel = chaos_modal.get_node_or_null("Panel")
+	
+	if dimmer:
+		dimmer.modulate.a = 0.0
+		var dt = create_tween()
+		dt.tween_property(dimmer, "modulate:a", 1.0, 0.15)
+	
+	if panel:
+		panel.pivot_offset = Vector2(panel.size.x / 2.0, panel.size.y / 2.0)
+		panel.scale = Vector2(0.4, 0.4)
+		panel.modulate.a = 0.0
+		var pt = create_tween()
+		pt.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pt.parallel().tween_property(panel, "modulate:a", 1.0, 0.18)
+	
+	if current_chaos_card.is_empty():
+		_roll_and_reveal_card()
+	else:
+		_display_current_chaos_card()
+
+
+func _on_chaos_next_pressed():
+	if is_rolling_card:
+		return
+	current_round += 1
+	_roll_and_reveal_card()
+
+
+func _on_chaos_close_pressed():
+	if is_rolling_card:
+		return
+	if not chaos_modal:
+		return
+	
+	var dimmer = chaos_modal.get_node_or_null("Dimmer")
+	var panel = chaos_modal.get_node_or_null("Panel")
+	var ct = create_tween()
+	if panel:
+		ct.tween_property(panel, "scale", Vector2(0.7, 0.7), 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		ct.parallel().tween_property(panel, "modulate:a", 0.0, 0.15)
+	if dimmer:
+		ct.parallel().tween_property(dimmer, "modulate:a", 0.0, 0.15)
+	ct.tween_callback(func(): chaos_modal.visible = false)
+
+
+func _roll_and_reveal_card():
+	if not chaos_modal:
+		return
+	is_rolling_card = true
+	var panel = chaos_modal.get_node_or_null("Panel")
+	var next_btn = chaos_modal.get_node_or_null("Panel/MarginContainer/VBoxContainer/Buttons/Next")
+	var close_btn = chaos_modal.get_node_or_null("Panel/MarginContainer/VBoxContainer/Buttons/Close")
+	if next_btn: next_btn.disabled = true
+	if close_btn: close_btn.disabled = true
+	
+	if chaos_round_label:
+		chaos_round_label.text = "⚡ ĐANG RÚT BIẾN CỐ (VÒNG " + str(current_round) + ") ⚡"
+	if chaos_desc_label is RichTextLabel:
+		chaos_desc_label.text = "[center][color=#AAAAAA]Đang xáo trộn biến cố...[/color][/center]"
+	elif chaos_desc_label is Label:
+		chaos_desc_label.text = "Đang xáo trộn biến cố..."
+	
+	# Rapid rolling shuffle (Slot Machine suspense)
+	var roll_steps = 7
+	for step in range(roll_steps):
+		if chaos_title_label:
+			var random_card = ChaosCards.CARDS.pick_random()
+			chaos_title_label.text = random_card.get("title", "???")
+		if panel:
+			panel.rotation_degrees = randf_range(-2.5, 2.5)
+			panel.scale = Vector2(0.96, 0.96) if step % 2 == 0 else Vector2(1.04, 1.04)
+		await get_tree().create_timer(0.06).timeout
+	
+	# Slam down final card with elastic bounce & screen shake
+	if panel:
+		panel.rotation_degrees = 0.0
+		panel.scale = Vector2(1.18, 1.18)
+		var slam_tween = create_tween()
+		slam_tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.35).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	
+	_shake_screen(0.25, 0.06)
+	
+	current_chaos_card = ChaosCards.draw_card(Global.players, drawn_chaos_ids)
+	drawn_chaos_ids.append(current_chaos_card["id"])
+	_display_current_chaos_card()
+	
+	if next_btn: next_btn.disabled = false
+	if close_btn: close_btn.disabled = false
+	is_rolling_card = false
+
+
+func _display_current_chaos_card():
+	if chaos_round_label:
+		chaos_round_label.text = "⚡ THẺ BIẾN CỐ (VÒNG " + str(current_round) + ") ⚡"
+	if chaos_title_label:
+		chaos_title_label.text = current_chaos_card.get("title", "")
+	if chaos_desc_label is RichTextLabel:
+		chaos_desc_label.text = current_chaos_card.get("bbcode_description", current_chaos_card.get("description", ""))
+	elif chaos_desc_label is Label:
+		chaos_desc_label.text = current_chaos_card.get("description", "")
+	if chaos_next_button:
+		chaos_next_button.text = "🎲 Vòng " + str(current_round + 1)
+

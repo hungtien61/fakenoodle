@@ -83,7 +83,7 @@ variation_transform = Transform2D(1, 0.25, 0, 1, 0, 0)
 
 [sub_resource type="LabelSettings" id="LabelSettings_mgrm8"]
 
-[node name="TITLE SCREEN" type="Control" unique_id=1617584688 node_paths=PackedStringArray("imposters_label", "players", "hint_button", "subtract", "add")]
+[node name="TITLE SCREEN" type="Control" unique_id=1617584688 node_paths=PackedStringArray("imposters_label", "players", "hint_button", "chaos_button", "subtract", "add")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,6 +94,7 @@ script = ExtResource("1_ig5kc")
 imposters_label = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Imposters/MarginContainer/HBoxContainer/HBoxContainer2/Label")
 players = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Players")
 hint_button = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Hint")
+chaos_button = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Chaos")
 subtract = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Imposters/MarginContainer/HBoxContainer/HBoxContainer2/Subtract")
 add = NodePath("VBoxContainer/Options/MarginContainer/VBoxContainer/Imposters/MarginContainer/HBoxContainer/HBoxContainer2/Add")
 
@@ -211,6 +212,18 @@ theme_override_icons/checked = SubResource("DPITexture_ak2if")
 theme_override_icons/unchecked = SubResource("DPITexture_ig5kc")
 text = "Impasta Hint?"
 
+[node name="Chaos" type="CheckButton" parent="VBoxContainer/Options/MarginContainer/VBoxContainer" unique_id=1470270546]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_v6p8y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ak2if")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ig5kc")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ak2if")
+theme_override_icons/checked = SubResource("DPITexture_ak2if")
+theme_override_icons/unchecked = SubResource("DPITexture_ig5kc")
+text = "Chaos Cards?"
+
 [node name="Settings" type="Button" parent="VBoxContainer/Options/MarginContainer/VBoxContainer" unique_id=1351346743]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -262,5 +275,6 @@ autowrap_mode = 3
 [connection signal="pressed" from="VBoxContainer/Options/MarginContainer/VBoxContainer/Imposters/MarginContainer/HBoxContainer/HBoxContainer2/Subtract" to="." method="_on_subtract_pressed"]
 [connection signal="pressed" from="VBoxContainer/Options/MarginContainer/VBoxContainer/Imposters/MarginContainer/HBoxContainer/HBoxContainer2/Add" to="." method="_on_add_pressed"]
 [connection signal="toggled" from="VBoxContainer/Options/MarginContainer/VBoxContainer/Hint" to="." method="_on_hint_toggled"]
+[connection signal="toggled" from="VBoxContainer/Options/MarginContainer/VBoxContainer/Chaos" to="." method="_on_chaos_toggled"]
 [connection signal="pressed" from="VBoxContainer/Options/MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="VBoxContainer/STart/MarginContainer/Start Game" to="." method="_on_start_game_pressed"]

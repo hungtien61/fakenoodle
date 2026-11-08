@@ -9,11 +9,15 @@ extends Control
 
 @export var again_slider: Slider
 
+@export var chaos_check: CheckButton
+
 func _ready():
 	var saved_value = Global.get_setting("imposter_starting_chance", chance_slider.value)
 	var again_value = Global.get_setting("imposter_goes_again_chance", again_slider.value)
 	chance_slider.value = saved_value
 	again_slider.value = again_value
+	if chaos_check:
+		chaos_check.button_pressed = Global.get_setting("chaos_cards", Global.chaos_cards)
 	_on_h_slider_value_changed(saved_value)
 
 func _on_h_slider_value_changed(value):
@@ -23,6 +27,8 @@ func _on_h_slider_value_changed(value):
 func _on_done_pressed():
 	Global.set_setting("imposter_starting_chance", chance_slider.value/chance_slider.max_value*100)
 	Global.set_setting("imposter_goes_again_chance", again_slider.value/again_slider.max_value*100)
+	if chaos_check:
+		Global.set_setting("chaos_cards", chaos_check.button_pressed)
 	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
 
 

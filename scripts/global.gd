@@ -4,12 +4,14 @@ const SETTINGS_PATH := "user://config/settings.json"
 const DEFAULT_SETTINGS := {
 	"imposter_hint": true,
 	"imposter_starting_chance": 50.0,
-	"imposter_goes_again_chance": 50.0
+	"imposter_goes_again_chance": 50.0,
+	"chaos_cards": false
 }
 
 var players: Array = ["Player 1", "Player 2", "Player 3"]
 var imposters: int = 1
 var imposter_hint: bool = true
+var chaos_cards: bool = false
 var imposter_starting_chance: float = 50.0
 var imposter_goes_again_chance: float = 50.0
 var settings: Dictionary = DEFAULT_SETTINGS.duplicate(true)
@@ -57,10 +59,12 @@ func load_settings():
 	
 	# Fixed a small typo here (removed the square brackets around DEFAULT_SETTINGS)
 	imposter_goes_again_chance = float(settings.get("imposter_goes_again_chance", DEFAULT_SETTINGS["imposter_goes_again_chance"]))
+	chaos_cards = bool(settings.get("chaos_cards", DEFAULT_SETTINGS["chaos_cards"]))
 	
 	settings["imposter_hint"] = imposter_hint
 	settings["imposter_starting_chance"] = imposter_starting_chance
 	settings["imposter_goes_again_chance"] = imposter_goes_again_chance
+	settings["chaos_cards"] = chaos_cards
 	save_settings(settings)
 
 func save_settings(value: Dictionary = settings):
@@ -93,6 +97,9 @@ func set_setting(key: String, value):
 		"imposter_hint":
 			imposter_hint = bool(value)
 			settings[key] = imposter_hint
+		"chaos_cards":
+			chaos_cards = bool(value)
+			settings[key] = chaos_cards
 		"imposter_starting_chance":
 			imposter_starting_chance = float(value)
 			settings[key] = imposter_starting_chance

@@ -10,13 +10,67 @@ viewport_path = NodePath("card 1/Sprite3D/SubViewport")
 [sub_resource type="ViewportTexture" id="ViewportTexture_yqjtg"]
 viewport_path = NodePath("card 1/Sprite3D2/SubViewport")
 
-[node name="GAME" type="Node3D" unique_id=948852900 node_paths=PackedStringArray("card_1", "card_2", "next", "new_game", "exit")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chaos_card"]
+bg_color = Color(0.1, 0.07, 0.16, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.8, 0.2, 0.95)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(1, 0.8, 0.2, 0.25)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chaos_btn"]
+content_margin_left = 16.0
+content_margin_top = 4.0
+content_margin_right = 16.0
+content_margin_bottom = 4.0
+bg_color = Color(0.22, 0.11, 0.33, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.8, 0.2, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(1, 0.8, 0.2, 0.25)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chaos_btn_pressed"]
+content_margin_left = 16.0
+content_margin_top = 4.0
+content_margin_right = 16.0
+content_margin_bottom = 4.0
+bg_color = Color(0.14, 0.06, 0.2, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.9, 0.4, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="GAME" type="Node3D" unique_id=948852900 node_paths=PackedStringArray("card_1", "card_2", "next", "new_game", "exit", "chaos_button", "chaos_modal", "chaos_round_label", "chaos_title_label", "chaos_desc_label", "chaos_next_button")]
 script = ExtResource("1_yqjtg")
 card_1 = NodePath("card 1")
 card_2 = NodePath("card 2")
 next = NodePath("Camera3D/Done")
 new_game = NodePath("Camera3D/Finish")
 exit = NodePath("Camera3D/Exit")
+chaos_button = NodePath("Camera3D/Finish/ChaosButton")
+chaos_modal = NodePath("Camera3D/ChaosModal")
+chaos_round_label = NodePath("Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Round")
+chaos_title_label = NodePath("Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Title")
+chaos_desc_label = NodePath("Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Description")
+chaos_next_button = NodePath("Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Buttons/Next")
 
 [node name="card 1" type="Node3D" parent="." unique_id=353507376]
 
@@ -226,6 +280,26 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 24
 text = "Reveal Imposter"
 
+[node name="ChaosButton" type="Button" parent="Camera3D/Finish" unique_id=71213801]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -237.0
+offset_right = 112.0
+offset_bottom = -163.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(112, 37)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_chaos_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_chaos_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_chaos_btn")
+text = "🎲 Thẻ Biến Cố"
+
 [node name="Done" type="Button" parent="Camera3D" unique_id=1300454238]
 visible = false
 anchors_preset = 7
@@ -254,7 +328,107 @@ offset_bottom = 74.0
 grow_horizontal = 0
 icon = ExtResource("3_lnu2h")
 
+[node name="ChaosModal" type="Control" parent="Camera3D" unique_id=987654321]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dimmer" type="ColorRect" parent="Camera3D/ChaosModal" unique_id=987654322]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.78)
+
+[node name="Panel" type="PanelContainer" parent="Camera3D/ChaosModal" unique_id=987654323]
+custom_minimum_size = Vector2(380, 420)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -190.0
+offset_top = -210.0
+offset_right = 190.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(190, 210)
+theme_override_styles/panel = SubResource("StyleBoxFlat_chaos_card")
+
+[node name="MarginContainer" type="MarginContainer" parent="Camera3D/ChaosModal/Panel" unique_id=987654324]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera3D/ChaosModal/Panel/MarginContainer" unique_id=987654325]
+layout_mode = 2
+
+[node name="Round" type="Label" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654326]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 20
+text = "⚡ THẺ BIẾN CỐ (VÒNG 2) ⚡"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654327]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "🎭 Hoán Đổi Diễn Xuất"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654328]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Description" type="RichTextLabel" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654329]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.92, 0.95, 1, 1)
+theme_override_font_sizes/normal_font_size = 22
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "[center]Huy và Lan lập tức đổi phong cách nói cho nhau![/center]"
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654330]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Buttons" type="HBoxContainer" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer" unique_id=987654331]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Next" type="Button" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Buttons" unique_id=987654332]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "🎲 Vòng Kế"
+
+[node name="Close" type="Button" parent="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Buttons" unique_id=987654333]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Đã Hiểu"
+
 [connection signal="pressed" from="Camera3D/Finish" to="." method="_on_finish_pressed"]
 [connection signal="pressed" from="Camera3D/Finish/Reveal" to="." method="_on_reveal_pressed"]
+[connection signal="pressed" from="Camera3D/Finish/ChaosButton" to="." method="_on_chaos_button_pressed"]
 [connection signal="pressed" from="Camera3D/Done" to="." method="_on_next_pressed"]
 [connection signal="pressed" from="Camera3D/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Buttons/Next" to="." method="_on_chaos_next_pressed"]
+[connection signal="pressed" from="Camera3D/ChaosModal/Panel/MarginContainer/VBoxContainer/Buttons/Close" to="." method="_on_chaos_close_pressed"]

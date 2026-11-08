@@ -3,6 +3,7 @@ extends Control
 @export var imposters_label: Label
 @export var players: Button
 @export var hint_button: CheckButton
+@export var chaos_button: CheckButton
 @export var subtract: Button
 @export var add: Button
 
@@ -10,6 +11,8 @@ extends Control
 func _ready():
 	imposters_label.text = str(Global.get_setting("imposters", Global.imposters))
 	hint_button.button_pressed = Global.get_setting("imposter_hint", Global.imposter_hint)
+	if chaos_button:
+		chaos_button.button_pressed = Global.get_setting("chaos_cards", Global.chaos_cards)
 	
 	players.text = "Players (" + str(len(Global.get_setting("players", Global.players))) + ")"
 	
@@ -41,6 +44,10 @@ func disable_imposter_tickers():
 
 func _on_hint_toggled(toggled_on):
 	Global.set_setting("imposter_hint", toggled_on)
+
+
+func _on_chaos_toggled(toggled_on):
+	Global.set_setting("chaos_cards", toggled_on)
 
 
 func _on_subtract_pressed():
